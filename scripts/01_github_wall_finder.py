@@ -66,7 +66,6 @@ SEARCH_QUERIES = [
 ]
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
-REPO_LICENSE_URL = re.compile(r"https?://api\.github\.com/repos/[^/]+/[^/]+/license")
 
 
 def env_int(name: str, default: int) -> int:
@@ -118,7 +117,6 @@ class GitHubClient:
     def repo_license(self, full_name: str) -> dict[str, Any] | None:
         if full_name in self.license_cache:
             return self.license_cache[full_name]
-
         try:
             response = self.get(f"{GITHUB_API}/repos/{full_name}")
             license_info = response.json().get("license")
@@ -127,18 +125,12 @@ class GitHubClient:
                 return license_info
         except requests.RequestException:
             pass
-
         self.license_cache[full_name] = None
         return None
 
     def download(self, raw_url: str) -> tuple[bytes, str] | None:
         try:
-            with self.session.get(
-                raw_url,
-                stream=True,
-                timeout=30,
-                allow_redirects=True,
-            ) as response:
+            with self.session.get(raw_url, stream=True, timeout=30, allow_redirects=True) as response:
                 response.raise_for_status()
                 content_type = response.headers.get("content-type", "")
                 content_length = response.headers.get("content-length")
@@ -159,14 +151,15 @@ class GitHubClient:
 
 def raw_github_url(full_name: str, branch: str, path: str) -> str:
     owner, repo = full_name.split("/", 1)
-    return f"https://raw.githubusercontent.com/{owner}/{repo}/{quote(branch, safe='/-')}/{quote(path, safe='/') }"
+    return f"https://raw.githubusercontent.com/{owner}/{repo}/{quote(branch, safe='/-')}/{quote(path, safe='/')}"
 
 
 def safe_filename(full_name: str, path: str, digest: str) -> str:
     stem = Path(path).stem
+    suffix = Path(path).suffix.lower()
     stem = re.sub(r"[^A-Za-z0-9._-]+", "_", stem).strip("._") or "wallpaper"
     owner_repo = re.sub(r"[^A-Za-z0-9._-]+", "_", full_name)
-    return f"{owner_repo}_{stem}_{digest[:10]}.webp"
+    return f"{owner_repo}_{stem}_{digest[:10]}{suffix}"
 
 
 def classify_aspect(width: int, height: int) -> str:
@@ -318,7 +311,7 @@ def main() -> int:
     }
 
     payload = {
-        "generated_by": "VX Walls GitHub Wall Finder 1.0",
+        "generated_by": "VX Walls GitHub Wall Finder 1.1",
         "notes": [
             "Discovery only: GitHub-hosted images require individual rights review before redistribution.",
             "accepted_for_review means the image passed technical checks and has repository license metadata; it is not a legal approval.",
