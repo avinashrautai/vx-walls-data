@@ -51,6 +51,9 @@ jobs:
       - name: Build wallpaper catalog
         run: python scripts/05_build_catalog.py
 
+      - name: Prepare app-serving assets
+        run: python scripts/06_prepare_app_assets.py
+
       - name: Remove temporary candidate data
         run: |
           rm -rf candidates/images candidates/validated candidates/approved
