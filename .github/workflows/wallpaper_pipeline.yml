@@ -52,7 +52,7 @@ jobs:
         run: python scripts/05_build_catalog.py
 
       - name: Prepare app-serving assets
-        run: python scripts/06_prepare_app_assets.py
+        run: python scripts/07_prepare_app_assets.py
 
       - name: Remove temporary candidate data
         run: |
@@ -65,7 +65,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add wallpapers wallpapers.json
           if git diff --cached --quiet; then
-            echo "No publishable wallpaper changes to commit."
+            echo "No publishable wallpaper changes."
             exit 0
           fi
           git commit -m "chore: update approved wallpapers"
