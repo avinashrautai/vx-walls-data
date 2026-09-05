@@ -40,20 +40,30 @@ jobs:
       - name: Validate image quality
         run: python scripts/03_image_validator.py
 
-      - name: Optimize accepted images
+      - name: Stage only license-approved images
+        run: python scripts/06_stage_licensed.py
+
+      - name: Optimize approved images
+        env:
+          VX_INPUT_DIR: candidates/approved
         run: python scripts/04_optimize_webp.py
 
       - name: Build wallpaper catalog
         run: python scripts/05_build_catalog.py
 
-      - name: Commit pipeline output
+      - name: Remove temporary candidate data
+        run: |
+          rm -rf candidates/images candidates/validated candidates/approved
+          rm -f candidates/candidates.json candidates/license_report.json candidates/image_validation.json
+
+      - name: Commit only publishable output
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add candidates wallpapers wallpapers.json
+          git add wallpapers wallpapers.json
           if git diff --cached --quiet; then
-            echo "No pipeline output changes to commit."
+            echo "No publishable wallpaper changes to commit."
             exit 0
           fi
-          git commit -m "chore: update wallpaper pipeline output"
+          git commit -m "chore: update approved wallpapers"
           git push
