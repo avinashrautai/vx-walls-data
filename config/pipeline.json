@@ -1,0 +1,33 @@
+{
+  "search_queries": [
+    "wallpaper",
+    "phone-wallpaper",
+    "mobile-wallpaper",
+    "minimal-wallpaper",
+    "nature-wallpaper",
+    "abstract-wallpaper",
+    "space-wallpaper",
+    "city-wallpaper"
+  ],
+  "image_validation": {
+    "min_width": 1080,
+    "min_height": 1080,
+    "min_pixels": 2000000,
+    "min_bytes": 150000,
+    "max_bytes": 20971520,
+    "min_aspect_ratio": 0.5,
+    "max_aspect_ratio": 2.2,
+    "allow_square": true
+  },
+  "optimization": {
+    "format": "webp",
+    "quality": 88,
+    "max_long_edge": 3200,
+    "skip_if_larger": true
+  },
+  "policy": {
+    "require_license_evidence": true,
+    "automatic_license_pass_only": true,
+    "manual_review_required_for_ambiguous": true
+  }
+}
