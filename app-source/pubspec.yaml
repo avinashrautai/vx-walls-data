@@ -1,0 +1,30 @@
+name: vx_walls
+description: "A premium, minimalist wallpaper app."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.0
+  cached_network_image: ^3.3.1
+  image_gallery_saver: ^2.0.3
+  flutter_wallpaper_manager: ^0.0.4
+  flutter_cache_manager: ^3.3.2
+  permission_handler: ^11.3.0
+  lucide_icons_flutter: ^3.1.19
+  google_fonts: ^6.1.0
+  device_info_plus: ^9.1.2
+  shared_preferences: ^2.2.2
+  package_info_plus: ^8.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
