@@ -1,43 +1,63 @@
 {
   "schema_version": 2,
   "generated_by": "VX Walls App Asset Preparation 1.1",
-  "count": 6,
+  "count": 7,
   "wallpapers": [
+    {
+      "id": "03325_valleyofthestars_2880x1800",
+      "url": "wallpapers/optimized/03325_valleyofthestars_2880x1800.jpg",
+      "author": "VX Curated",
+      "source": {
+        "repository": "https://github.com/avinashrautai/vx-walls-data"
+      }
+    },
     {
       "id": "04001_thepierofhanaleibay_2880x1800",
       "url": "wallpapers/optimized/04001_thepierofhanaleibay_2880x1800.jpg",
       "author": "VX Curated",
-      "source": {"repository": "https://github.com/avinashrautai/vx-walls-data"}
+      "source": {
+        "repository": "https://github.com/avinashrautai/vx-walls-data"
+      }
     },
     {
       "id": "04026_manlysunrise_2880x1800",
       "url": "wallpapers/optimized/04026_manlysunrise_2880x1800.jpg",
       "author": "VX Curated",
-      "source": {"repository": "https://github.com/avinashrautai/vx-walls-data"}
+      "source": {
+        "repository": "https://github.com/avinashrautai/vx-walls-data"
+      }
     },
     {
       "id": "0d3c6jon7mw11",
       "url": "wallpapers/optimized/0d3c6jon7mw11.jpg",
       "author": "VX Curated",
-      "source": {"repository": "https://github.com/avinashrautai/vx-walls-data"}
+      "source": {
+        "repository": "https://github.com/avinashrautai/vx-walls-data"
+      }
     },
     {
       "id": "358972",
       "url": "wallpapers/optimized/358972.jpg",
       "author": "VX Curated",
-      "source": {"repository": "https://github.com/avinashrautai/vx-walls-data"}
+      "source": {
+        "repository": "https://github.com/avinashrautai/vx-walls-data"
+      }
     },
     {
       "id": "3m90fxiwwfo61",
       "url": "wallpapers/optimized/3m90fxiwwfo61.png",
       "author": "VX Curated",
-      "source": {"repository": "https://github.com/avinashrautai/vx-walls-data"}
+      "source": {
+        "repository": "https://github.com/avinashrautai/vx-walls-data"
+      }
     },
     {
       "id": "509987",
       "url": "wallpapers/optimized/509987.jpg",
       "author": "VX Curated",
-      "source": {"repository": "https://github.com/avinashrautai/vx-walls-data"}
+      "source": {
+        "repository": "https://github.com/avinashrautai/vx-walls-data"
+      }
     }
   ]
 }
