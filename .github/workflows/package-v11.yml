@@ -1,0 +1,23 @@
+name: Package VX Walls v11
+on:
+  push:
+    branches: [vx-v11-ui-final]
+    paths:
+      - 'app-source/**'
+      - '.github/workflows/package-v11.yml'
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package source
+        run: |
+          cd app-source
+          zip -r ../VX_Walls_v11_UI_Final.zip .
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: VX_Walls_v11_UI_Final
+          path: VX_Walls_v11_UI_Final.zip
+          if-no-files-found: error
