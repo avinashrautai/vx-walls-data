@@ -17,7 +17,6 @@ dependencies:
   permission_handler: ^11.3.0
   lucide_icons: ^0.1.5
   google_fonts: ^6.1.0
-  device_info_plus: ^9.1.2
   shared_preferences: ^2.2.2
   package_info_plus: ^8.0.2
 
