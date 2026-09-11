@@ -18,10 +18,6 @@ class VXPillItem {
   });
 }
 
-/// Canonical VX Pill visual language.
-///
-/// The Pill is intentionally independent from the application's light/dark
-/// theme. It stays white and uses one restrained Fine Line treatment.
 class VXPillTheme {
   static const Color background = Colors.white;
   static const Color border = Color(0xFFC9C9CE);
@@ -29,9 +25,13 @@ class VXPillTheme {
   static const Color textColor = Color(0xFF17171A);
   static const Color selectedColor = Color(0xFFF0642F);
   static const Color selectedBackground = Color(0x0FF0642F);
+
   static const double height = 66;
   static const double radius = 33;
   static const double borderWidth = .65;
+  static const double bottomPadding = 22;
+  static const double navigationWidth = 284;
+  static const double contextualWidth = 344;
 
   static const List<BoxShadow> shadows = <BoxShadow>[
     BoxShadow(
@@ -42,12 +42,15 @@ class VXPillTheme {
   ];
 }
 
+/// Canonical VX Pill.
+///
+/// The outer geometry never changes between screens: 66px high, 33px radius,
+/// bottom-centred, 22px safe-area buffer. Contextual mode only changes length.
 class VXPill extends StatelessWidget {
   final List<VXPillItem> items;
   final VXPillMode mode;
   final bool floating;
   final double? widthOverride;
-  final int animationMode;
 
   const VXPill({
     super.key,
@@ -55,42 +58,63 @@ class VXPill extends StatelessWidget {
     this.mode = VXPillMode.navigation,
     this.floating = true,
     this.widthOverride,
-    this.animationMode = 1,
   });
+
+  double _widthFor(double screenWidth) {
+    final maxWidth = screenWidth - 24;
+    final target = widthOverride ??
+        (mode == VXPillMode.contextual
+            ? VXPillTheme.contextualWidth
+            : VXPillTheme.navigationWidth);
+    return target.clamp(220.0, maxWidth).toDouble();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final maxWidth = screenWidth - 24;
-    final targetWidth = mode == VXPillMode.contextual ? 344.0 : 284.0;
-    final minWidth = maxWidth < 220 ? maxWidth : 220.0;
-    final pillWidth = widthOverride ?? maxWidth.clamp(minWidth, targetWidth).toDouble();
+    final pillWidth = _widthFor(MediaQuery.sizeOf(context).width);
 
     final pill = Semantics(
       container: true,
       label: mode == VXPillMode.navigation ? 'Navigation' : 'Wallpaper controls',
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
         height: VXPillTheme.height,
         width: pillWidth,
         padding: const EdgeInsets.symmetric(horizontal: 7),
         decoration: BoxDecoration(
           color: VXPillTheme.background,
           borderRadius: BorderRadius.circular(VXPillTheme.radius),
-          border: Border.all(color: VXPillTheme.border, width: VXPillTheme.borderWidth),
+          border: Border.all(
+            color: VXPillTheme.border,
+            width: VXPillTheme.borderWidth,
+          ),
           boxShadow: VXPillTheme.shadows,
         ),
         child: Row(
-          children: items.map((item) => Expanded(child: _Item(item: item, animationMode: animationMode))).toList(),
+          children: [
+            for (var i = 0; i < items.length; i++)
+              if (i == 0)
+                SizedBox(width: 58, child: _Item(item: items[i]))
+              else
+                Expanded(child: _Item(item: items[i])),
+          ],
         ),
       ),
     );
 
     if (!floating) return Center(child: pill);
+
     return Align(
       alignment: Alignment.bottomCenter,
       child: SafeArea(
+        top: false,
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 22, left: 12, right: 12),
+          padding: const EdgeInsets.only(
+            bottom: VXPillTheme.bottomPadding,
+            left: 12,
+            right: 12,
+          ),
           child: pill,
         ),
       ),
@@ -103,93 +127,123 @@ class VXPillCallout extends StatelessWidget {
   final double targetX;
   final double width;
 
-  const VXPillCallout({super.key, required this.child, required this.targetX, this.width = 275});
+  const VXPillCallout({
+    super.key,
+    required this.child,
+    required this.targetX,
+    this.width = 275,
+  });
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final safeBottom = MediaQuery.paddingOf(context).bottom;
-    const pillBottomPadding = 22.0;
     const connectorHeight = 11.0;
     final maxWidth = screenWidth - 24;
-    final effectiveWidth = maxWidth < 220 ? maxWidth : width.clamp(220.0, maxWidth).toDouble();
-    final popupBottom = safeBottom + pillBottomPadding + VXPillTheme.height + connectorHeight;
+    final effectiveWidth = width.clamp(220.0, maxWidth).toDouble();
+    final popupBottom = safeBottom +
+        VXPillTheme.bottomPadding +
+        VXPillTheme.height +
+        connectorHeight;
     final minTarget = effectiveWidth / 2 + 12;
     final maxTarget = screenWidth - effectiveWidth / 2 - 12;
     final clampedTarget = targetX.clamp(minTarget, maxTarget).toDouble();
     final left = clampedTarget - effectiveWidth / 2;
 
-    return Stack(children: [
-      Positioned(
-        left: left,
-        bottom: popupBottom,
-        width: effectiveWidth,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            decoration: BoxDecoration(
-              color: VXPillTheme.background,
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: VXPillTheme.border, width: VXPillTheme.borderWidth),
-              boxShadow: VXPillTheme.shadows,
+    return Stack(
+      children: [
+        Positioned(
+          left: left,
+          bottom: popupBottom,
+          width: effectiveWidth,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              decoration: BoxDecoration(
+                color: VXPillTheme.background,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: VXPillTheme.border,
+                  width: VXPillTheme.borderWidth,
+                ),
+                boxShadow: VXPillTheme.shadows,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: child,
+              ),
             ),
-            child: ClipRRect(borderRadius: BorderRadius.circular(24), child: child),
           ),
         ),
-      ),
-      Positioned(
-        left: clampedTarget - 9,
-        bottom: safeBottom + pillBottomPadding + VXPillTheme.height - 1,
-        width: 18,
-        height: connectorHeight + 2,
-        child: const IgnorePointer(child: CustomPaint(painter: _CalloutConnectorPainter())),
-      ),
-    ]);
+        Positioned(
+          left: clampedTarget - 9,
+          bottom: safeBottom +
+              VXPillTheme.bottomPadding +
+              VXPillTheme.height -
+              1,
+          width: 18,
+          height: connectorHeight + 2,
+          child: const IgnorePointer(
+            child: CustomPaint(painter: _CalloutConnectorPainter()),
+          ),
+        ),
+      ],
+    );
   }
 }
 
 class _Item extends StatelessWidget {
   final VXPillItem item;
-  final int animationMode;
-  const _Item({required this.item, required this.animationMode});
+  const _Item({required this.item});
 
   @override
   Widget build(BuildContext context) {
-    final color = item.selected ? VXPillTheme.selectedColor : VXPillTheme.iconColor;
-    final duration = Duration(milliseconds: animationMode == 0 ? 0 : animationMode == 1 ? 180 : 300);
+    final color = item.selected
+        ? VXPillTheme.selectedColor
+        : VXPillTheme.iconColor;
+
     return Semantics(
       button: true,
       selected: item.selected,
       label: item.label,
       hint: item.selected ? 'Selected' : 'Activate',
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(24),
         onTap: item.onTap,
         child: AnimatedContainer(
-          duration: duration,
-          curve: animationMode == 2 ? Curves.easeInOutCubic : Curves.easeOutCubic,
+          duration: const Duration(milliseconds: 160),
+          curve: Curves.easeOutCubic,
           margin: const EdgeInsets.symmetric(vertical: 7),
           decoration: BoxDecoration(
-            color: item.selected ? VXPillTheme.selectedBackground : Colors.transparent,
+            color: item.selected
+                ? VXPillTheme.selectedBackground
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(24),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              item.iconWidget != null
-                  ? AnimatedScale(
-                      scale: item.selected ? 1.0 : .96,
-                      duration: duration,
-                      curve: Curves.easeOutCubic,
-                      child: SizedBox(width: 21, height: 21, child: item.iconWidget),
-                    )
-                  : Icon(item.icon, size: 21, color: color),
+              SizedBox(
+                width: 21,
+                height: 21,
+                child: item.iconWidget ??
+                    Icon(item.icon, size: 21, color: color),
+              ),
               const SizedBox(height: 4),
-              Text(
-                item.label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 10, height: 1, fontWeight: item.selected ? FontWeight.w800 : FontWeight.w600, color: color),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: Text(
+                  item.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 10,
+                    height: 1,
+                    fontWeight:
+                        item.selected ? FontWeight.w800 : FontWeight.w600,
+                    color: color,
+                  ),
+                ),
               ),
             ],
           ),
@@ -201,6 +255,7 @@ class _Item extends StatelessWidget {
 
 class _CalloutConnectorPainter extends CustomPainter {
   const _CalloutConnectorPainter();
+
   @override
   void paint(Canvas canvas, Size size) {
     final path = Path()
@@ -211,6 +266,7 @@ class _CalloutConnectorPainter extends CustomPainter {
       ..close();
     canvas.drawPath(path, Paint()..color = Colors.white);
   }
+
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
