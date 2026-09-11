@@ -5,24 +5,27 @@ class VXHeader extends StatelessWidget {
   final String title;
   final Widget? trailing;
   final bool compact;
+  final Color? foregroundColor;
 
   const VXHeader({
     super.key,
     required this.title,
     this.trailing,
     this.compact = false,
+    this.foregroundColor,
   });
 
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final foreground = dark ? Colors.white : const Color(0xFF17171A);
+    final foreground = foregroundColor ??
+        (dark ? Colors.white : const Color(0xFF17171A));
     return SizedBox(
       height: compact ? 54 : 62,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          VXBrandMark(size: compact ? 24 : 27),
+          VXBrandMark(size: compact ? 24 : 27, color: foreground),
           const SizedBox(width: 10),
           Text(
             title,
